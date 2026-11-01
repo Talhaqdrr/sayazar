@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Sayazar Masjid Admin</title>
+<style>
+  :root{--green-900:#0a2e24;--green-700:#13503f;--green-600:#1a6650;--green-100:#e6f0eb;--gold:#c9a24a;--gold-light:#e8cf8a;--cream:#fbf8f1;--ink:#1e2a25;--muted:#5d6b64;--line:#e6dfcc;--danger:#a3312a}
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+  header{background:var(--green-900);color:#fff;border-bottom:1px solid rgba(201,162,74,.4)}
+  .bar{max-width:980px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .bar b{font-size:1.1rem}
+  .bar nav{display:flex;align-items:center;gap:14px}
+  .bar a{color:var(--gold-light);font-size:.92rem}
+  main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+  h1{font-size:1.3rem;margin:0 0 14px;color:var(--green-700)}
+  h2{font-size:1.05rem;margin:0 0 12px;color:var(--green-700)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .login{max-width:380px;margin:8vh auto 0}
+  .layout{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px;align-items:start}
+  label{display:block;font-size:.88rem;font-weight:600;margin:0 0 12px}
+  label small{font-weight:400;color:var(--muted)}
+  input,textarea{display:block;width:100%;margin-top:4px;padding:10px 12px;font:inherit;color:inherit;background:#fff;border:1px solid #cfc7b1;border-radius:10px}
+  input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+  textarea{min-height:92px;resize:vertical}
+  input[dir=rtl]{text-align:right}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label.check{display:flex;align-items:flex-start;gap:10px;font-weight:500}
+  label.check input{width:20px;height:20px;margin:1px 0 0;flex:none}
+  button{min-height:44px;padding:10px 18px;font:inherit;font-weight:600;border-radius:10px;border:1px solid transparent;cursor:pointer}
+  .primary{background:var(--green-600);color:#fff}
+  .primary:hover{background:var(--green-700)}
+  .plain{background:#fff;color:var(--green-700);border-color:#cfc7b1}
+  .danger{background:#fff;color:var(--danger);border-color:#dfb9b5}
+  .link{background:none;color:var(--gold-light);min-height:0;padding:0;font-weight:400;text-decoration:underline;font-size:.92rem}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .msg{min-height:1.4em;margin:10px 0 0;font-size:.9rem;color:var(--green-600)}
+  .msg.err{color:var(--danger)}
+  .ev{padding:14px 0;border-top:1px solid var(--line)}
+  .ev:first-of-type{border-top:0;padding-top:0}
+  .ev b{display:block;overflow-wrap:anywhere}
+  .ev .ur{display:block;direction:rtl;text-align:right;overflow-wrap:anywhere}
+  .ev p{margin:2px 0 8px;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+  .tag{display:inline-block;margin-left:6px;padding:0 8px;font-size:.75rem;border-radius:999px;background:var(--green-100);color:var(--green-700)}
+  .ev .actions button{min-height:38px;padding:6px 14px;font-size:.9rem}
+  details{margin-top:16px}
+  summary{cursor:pointer;color:var(--muted);font-size:.92rem}
+  .empty{color:var(--muted);margin:0}
+  @media (max-width:760px){.layout{grid-template-columns:1fr}}
+  @media (max-width:360px){.row{grid-template-columns:1fr;gap:0}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <b>Sayazar Masjid Admin</b>
+  <nav><a href="/">View website</a><button class="link" id="logout" hidden>Sign out</button></nav>
+</div></header>
+<main>
+  <form class="card login" id="loginForm" hidden>
+    <h1>Sign in</h1>
+    <label>Password<input type="password" id="password" autocomplete="current-password" required></label>
+    <button class="primary" type="submit">Sign in</button>
+    <p class="msg err" id="loginMsg" role="alert"></p>
+  </form>
+
+  <div class="layout" id="dash" hidden>
+    <form class="card" id="eventForm">
+      <h1 id="formTitle">Add an event</h1>
+      <label>Title<input id="title" maxlength="120" required></label>
+      <label>Urdu title <small>(optional)</small><input id="titleUr" maxlength="120" dir="rtl" lang="ur"></label>
+      <div class="row">
+        <label>Date<input type="date" id="date" required></label>
+        <label>Time <small>(optional)</small><input type="time" id="time"></label>
+      </div>
+      <label>Location <small>(optional)</small><input id="location" maxlength="120" placeholder="Sayazar Masjid"></label>
+      <label>Details <small>(optional)</small><textarea id="details" maxlength="1000"></textarea></label>
+      <label class="check"><input type="checkbox" id="showInBanner" checked>Show in the message at the top of the website</label>
+      <div class="actions">
+        <button class="primary" type="submit" id="saveBtn">Add event</button>
+        <button class="plain" type="button" id="cancelBtn" hidden>Cancel</button>
+      </div>
+      <p class="msg" id="formMsg" role="status"></p>
+    </form>
+
+    <div class="card">
+      <h2>Upcoming events</h2>
+      <div id="upcoming"></div>
+      <details id="pastWrap" hidden>
+        <summary>Past events</summary>
+        <div id="past" style="margin-top:12px"></div>
+      </details>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const FIELDS = ["title", "titleUr", "date", "time", "location", "details"];
+let events = [], editingId = null;
+
+async function api(method, url, body) {
+  const res = await fetch(url, {
+    method,
+    credentials: "same-origin",
+    headers: body ? { "Content-Type": "application/json" } : {},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && url !== "/api/login") { showLogin(); throw new Error("Please sign in again."); }
+  if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+  return data;
+}
+
+function showLogin() {
+  $("dash").hidden = true; $("logout").hidden = true; $("loginForm").hidden = false;
+  $("password").value = ""; $("password").focus();
+}
+async function showDash() {
+  $("loginForm").hidden = true; $("dash").hidden = false; $("logout").hidden = false;
+  await loadEvents();
+}
+async function loadEvents() {
+  events = await api("GET", "/api/events");
+  const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);   // Pakistan date
+  const upcoming = events.filter(e => e.date >= today), past = events.filter(e => e.date < today).reverse();
+  renderList($("upcoming"), upcoming, "No upcoming events yet. Add one with the form.");
+  renderList($("past"), past, "");
+  $("pastWrap").hidden = !past.length;
+}
+function renderList(box, list, emptyText) {
+  box.replaceChildren();
+  if (!list.length && emptyText) {
+    const p = document.createElement("p"); p.className = "empty"; p.textContent = emptyText; box.append(p);
+  }
+  list.forEach(e => {
+    const row = document.createElement("div"); row.className = "ev";
+    const title = document.createElement("b"); title.textContent = e.title;
+    if (e.showInBanner) {
+      const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "Top message"; title.append(tag);
+    }
+    row.append(title);
+    if (e.titleUr) { const u = document.createElement("span"); u.className = "ur"; u.textContent = e.titleUr; row.append(u); }
+    const info = document.createElement("p");
+    info.textContent = [fmtDate(e.date), e.time && fmtTime(e.time), e.location].filter(Boolean).join(" · ");
+    const actions = document.createElement("div"); actions.className = "actions";
+    const edit = document.createElement("button");
+    edit.type = "button"; edit.className = "plain"; edit.textContent = "Edit";
+    edit.addEventListener("click", () => startEdit(e));
+    const del = document.createElement("button");
+    del.type = "button"; del.className = "danger"; del.textContent = "Delete";
+    del.addEventListener("click", () => removeEvent(e));
+    actions.append(edit, del); row.append(info, actions); box.append(row);
+  });
+}
+const fmtDate = d => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB",
+  { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+function fmtTime(t) {
+  const [h, m] = t.split(":").map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+}
+function resetForm() {
+  editingId = null;
+  $("eventForm").reset();
+  $("formTitle").textContent = "Add an event"; $("saveBtn").textContent = "Add event"; $("cancelBtn").hidden = true;
+}
+function startEdit(e) {
+  editingId = e.id;
+  FIELDS.forEach(f => { $(f).value = e[f] || ""; });
+  $("showInBanner").checked = e.showInBanner;
+  $("formTitle").textContent = "Edit event"; $("saveBtn").textContent = "Save changes"; $("cancelBtn").hidden = false;
+  $("formMsg").textContent = "";
+  $("eventForm").scrollIntoView({ block: "start" }); $("title").focus();
+}
+function setMsg(text, isError) {
+  $("formMsg").textContent = text; $("formMsg").classList.toggle("err", !!isError);
+}
+async function removeEvent(e) {
+  if (!confirm(`Delete "${e.title}"? This cannot be undone.`)) return;
+  try {
+    await api("DELETE", "/api/events/" + e.id);
+    if (editingId === e.id) resetForm();
+    await loadEvents(); setMsg("Event deleted.");
+  } catch (err) { setMsg(err.message, true); }
+}
+
+$("loginForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  $("loginMsg").textContent = "";
+  try { await api("POST", "/api/login", { password: $("password").value }); await showDash(); }
+  catch (err) { $("loginMsg").textContent = err.message; }
+});
+$("eventForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const body = { showInBanner: $("showInBanner").checked };
+  FIELDS.forEach(f => { body[f] = $(f).value; });
+  const editing = editingId !== null;
+  try {
+    await api(editing ? "PUT" : "POST", "/api/events" + (editing ? "/" + editingId : ""), body);
+    resetForm(); await loadEvents(); setMsg(editing ? "Changes saved." : "Event added. It is now on the website.");
+  } catch (err) { setMsg(err.message, true); }
+});
+$("cancelBtn").addEventListener("click", () => { resetForm(); setMsg(""); });
+$("logout").addEventListener("click", async () => { await api("POST", "/api/logout"); resetForm(); showLogin(); });
+
+api("GET", "/api/session").then(s => s.signedIn ? showDash() : showLogin()).catch(showLogin);
+</script>
+</body>
+</html>
